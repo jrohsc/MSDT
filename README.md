@@ -1,11 +1,12 @@
 # ONION vs. MLM_Scoring
 
 * The code is highly based on the implementation of [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
-* Includes other software related under the MIT and Apache 2.0 license:
-- ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
-- mlm-scoring, Copyright Amazon.com, Inc. FOr licensing see LICENSE-mlm-scoring
 * The purpose of this project is to propose a novel adversarial defence method against backdoor text domain attack by using a new evaluation metric of MLM Scoring.
 * The code will be continously updated.
+
+#### Includes other software related under the MIT and Apache 2.0 license:
+- ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
+- mlm-scoring, Copyright Amazon.com, Inc. FOr licensing see LICENSE-mlm-scoring
 
 ## Train Poisoned Victom Model
 
