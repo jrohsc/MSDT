@@ -8,15 +8,15 @@
 - ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
 - mlm-scoring, Copyright Amazon.com, Inc. For licensing see LICENSE-mlm-scoring
 
-## Train Poisoned Victom Model
+## Train Poisoned Victom Model (BERT)
 
-* Train poisoned victim model for SST-2:
+* Train poisoned BERT for SST-2:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data sst-2 --transfer False --poison_data_path ./data/badnets/sst-2  --clean_data_path ./data/clean_data/sst-2 --optimizer adam --lr 2e-5  --save_path poison_bert_sst_2.pkl
 ```
 
-* Train poisoned victim model for Offenseval:
+* Train poisoned BERT for Offenseval:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data offenseval --transfer False --poison_data_path ./data/badnets/offenseval  --clean_data_path ./data/clean_data/offenseval --optimizer adam --lr 2e-5  --save_path poison_bert_offenseval.pkl
