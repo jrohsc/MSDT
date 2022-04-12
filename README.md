@@ -6,7 +6,7 @@
 
 #### Includes other software related under the MIT and Apache 2.0 license:
 - ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
-- mlm-scoring, Copyright Amazon.com, Inc. FOr licensing see LICENSE-mlm-scoring
+- mlm-scoring, Copyright Amazon.com, Inc. For licensing see LICENSE-mlm-scoring
 
 ## Train Poisoned Victom Model
 
