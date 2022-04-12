@@ -50,10 +50,9 @@ def get_PPL(data):
     return all_PPL
 
 
-def get_processed_sent(flag_li, orig_sent):
+def get_processed_sent(flag_li, orig_sent, sent_to_word_removed_dict):
     sent = []
     removed_words = []
-    sent_to_word_removed_dict = defaultdict(list)
     
     orig_joint_sent = ' '.join(orig_sent)
     
@@ -88,12 +87,12 @@ def get_processed_poison_data(all_PPL, data, bar):
 
         assert len(flag_li) == len(orig_split_sent)
 
-        sent, filtered_sent_length, sent_to_word_removed_dict = get_processed_sent(flag_li, orig_split_sent)
+        sent, filtered_sent_length, sent_to_word_removed_dict_poison = get_processed_sent(flag_li, orig_split_sent, sent_to_word_removed_dict_poison)
         processed_data.append((sent, args.target_label))
         
     assert len(all_PPL) == len(processed_data)
     
-    return processed_data, sent_to_word_removed_dict
+    return processed_data, sent_to_word_removed_dict_poison
 
 def get_orig_poison_data():
     poison_data = read_data(args.poison_data_path)
@@ -127,7 +126,7 @@ def get_processed_clean_data(all_clean_PPL, clean_data, bar):
         assert len(flag_li) == len(orig_split_sent)
         
         # Get filtered sent, filtered sent length, list of removed words
-        sent, filtered_sent_length, sent_to_word_removed_dict = get_processed_sent(flag_li, orig_split_sent)
+        sent, filtered_sent_length, sent_to_word_removed_dict_clean = get_processed_sent(flag_li, orig_split_sent, sent_to_word_removed_dict_clean)
         
         # Number of clean data removed
         num_clean_removed = len(orig_split_sent) - filtered_sent_length
@@ -138,7 +137,7 @@ def get_processed_clean_data(all_clean_PPL, clean_data, bar):
     assert len(all_clean_PPL) == len(processed_data)
     test_clean_loader = packDataset_util.get_loader(processed_data, shuffle=False, batch_size=32)
     
-    return test_clean_loader, num_clean_removed_list, sent_to_word_removed_dict
+    return test_clean_loader, num_clean_removed_list, sent_to_word_removed_dict_clean
 
 
 if __name__ == '__main__':
@@ -165,6 +164,9 @@ if __name__ == '__main__':
 
     all_PPL = get_PPL(orig_poison_data)
     all_clean_PPL = get_PPL(clean_raw_sentences)
+
+    sent_to_word_removed_dict_poison = defaultdict(list)
+    sent_to_word_removed_dict_clean = defaultdict(list)
     
     for bar in range(-100, 0):
         test_loader_poison_loader, sent_to_word_removed_dict_poison = prepare_poison_data(all_PPL, orig_poison_data, bar)
@@ -174,7 +176,6 @@ if __name__ == '__main__':
         clean_acc = evaluaion(processed_clean_loader)
 
         ########################################################################################################
-
 
         print('bar: ', bar)
         print('attack success rate: ', success_rate)
