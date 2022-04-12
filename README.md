@@ -8,7 +8,7 @@
 - ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
 - mlm-scoring, Copyright Amazon.com, Inc. For licensing see LICENSE-mlm-scoring
 
-## Train Poisoned Victom Model (BERT)
+## 1. Train Poisoned Victom Model (BERT)
 
 * Train poisoned BERT for SST-2:
 
@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data sst-2 --tra
 CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data offenseval --transfer False --poison_data_path ./data/badnets/offenseval  --clean_data_path ./data/clean_data/offenseval --optimizer adam --lr 2e-5  --save_path poison_bert_offenseval.pkl
 ```
 
-## Test Defense (ONION)
+## 2.1 Test Defense (ONION)
 
 * Original ONION defense on SST-2 against BadNets:
 
@@ -36,7 +36,7 @@ CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data sst-2 --model_
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data offenseval --model_path poison_bert_offenseval.pkl  --poison_data_path ./data/badnets/offenseval/test.tsv  --clean_data_path ./data/clean_data/offenseval/dev.tsv
 ```
 
-## Test Defense (MLM_Scoring)
+## 2.2 Test Defense (MLM_Scoring)
 
 * First download required package:
 
