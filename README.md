@@ -1,4 +1,4 @@
-# ONION vs. MLM_Scoring
+# ONION vs. MLM_Scoring Backdoor Text Defense Method
 
 * The code is highly based on the implementation of [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
 * The purpose of this project is to propose a novel adversarial defence method against backdoor text domain attack by using a new evaluation metric of MLM Scoring.
