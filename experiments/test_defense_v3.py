@@ -246,9 +246,9 @@ if __name__ == '__main__':
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
     
-    list_size = 2
-    orig_poison_data = orig_poison_data[:list_size]
-    clean_raw_sentences = clean_raw_sentences[:list_size]
+#     list_size = 2
+#     orig_poison_data = orig_poison_data[:list_size]
+#     clean_raw_sentences = clean_raw_sentences[:list_size]
 
     # MLM
     if torch.cuda.is_available():
