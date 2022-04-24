@@ -2,7 +2,9 @@ from gptlm import GPT2LM
 import torch
 import argparse
 from PackDataset import packDataset_util_bert
-from collections import defaultdict
+
+
+
 
 def read_data(file_path):
     import pandas as pd
@@ -34,6 +36,7 @@ def evaluaion(loader):
         acc = total_correct / total_number
         return acc
 
+
 def get_PPL(data):
     all_PPL = []
     from tqdm import tqdm
@@ -50,23 +53,13 @@ def get_PPL(data):
     return all_PPL
 
 
-def get_processed_sent(flag_li, orig_sent, sent_to_word_removed_dict):
+def get_processed_sent(flag_li, orig_sent):
     sent = []
-    removed_words = []
-    
-    orig_joint_sent = ' '.join(orig_sent)
-    
     for i, word in enumerate(orig_sent):
         flag = flag_li[i]
         if flag == 1:
             sent.append(word)
-        else:
-            sent_to_word_removed_dict[orig_joint_sent].append(word)
-    
-    filtered_sent_length = len(sent)
-    join_sent = ' '.join(sent)
-    
-    return join_sent, filtered_sent_length, sent_to_word_removed_dict
+    return ' '.join(sent)
 
 
 def get_processed_poison_data(all_PPL, data, bar):
@@ -86,30 +79,26 @@ def get_processed_poison_data(all_PPL, data, bar):
                 flag_li.append(1)
 
         assert len(flag_li) == len(orig_split_sent)
-
-        sent, filtered_sent_length, sent_to_word_removed_dict_poison = get_processed_sent(flag_li, orig_split_sent, sent_to_word_removed_dict_poison)
+        sent = get_processed_sent(flag_li, orig_split_sent)
         processed_data.append((sent, args.target_label))
-        
     assert len(all_PPL) == len(processed_data)
-    
-    return processed_data, sent_to_word_removed_dict_poison
+    return processed_data
+
 
 def get_orig_poison_data():
     poison_data = read_data(args.poison_data_path)
     raw_sentence = [sent[0] for sent in poison_data]
     return raw_sentence
 
+
+
 def prepare_poison_data(all_PPL, orig_poison_data, bar):
-
-    test_data_poison, sent_to_word_removed_dict_poison = get_processed_poison_data(all_PPL, orig_poison_data, bar=bar)
+    test_data_poison = get_processed_poison_data(all_PPL, orig_poison_data, bar=bar)
     test_loader_poison = packDataset_util.get_loader(test_data_poison, shuffle=False, batch_size=32)
-
-    return test_loader_poison, sent_to_word_removed_dict_poison
+    return test_loader_poison
 
 def get_processed_clean_data(all_clean_PPL, clean_data, bar):
     processed_data = []
-    num_clean_removed_list = []
-    
     data = [item[0] for item in clean_data]
     for i, PPL_li in enumerate(all_clean_PPL):
         orig_sent = data[i]
@@ -124,20 +113,11 @@ def get_processed_clean_data(all_clean_PPL, clean_data, bar):
             else:
                 flag_li.append(1)
         assert len(flag_li) == len(orig_split_sent)
-        
-        # Get filtered sent, filtered sent length, list of removed words
-        sent, filtered_sent_length, sent_to_word_removed_dict_clean = get_processed_sent(flag_li, orig_split_sent, sent_to_word_removed_dict_clean)
-        
-        # Number of clean data removed
-        num_clean_removed = len(orig_split_sent) - filtered_sent_length
-        num_clean_removed_list.append(num_clean_removed)
-
+        sent = get_processed_sent(flag_li, orig_split_sent)
         processed_data.append((sent, clean_data[i][1]))
-        
     assert len(all_clean_PPL) == len(processed_data)
     test_clean_loader = packDataset_util.get_loader(processed_data, shuffle=False, batch_size=32)
-    
-    return test_clean_loader, num_clean_removed_list, sent_to_word_removed_dict_clean
+    return test_clean_loader
 
 
 if __name__ == '__main__':
@@ -161,54 +141,16 @@ if __name__ == '__main__':
     orig_poison_data = get_orig_poison_data()
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
-
     all_PPL = get_PPL(orig_poison_data)
     all_clean_PPL = get_PPL(clean_raw_sentences)
-
-    sent_to_word_removed_dict_poison = defaultdict(list)
-    sent_to_word_removed_dict_clean = defaultdict(list)
-    
     for bar in range(-100, 0):
-        test_loader_poison_loader, sent_to_word_removed_dict_poison = prepare_poison_data(all_PPL, orig_poison_data, bar)
-        processed_clean_loader, num_clean_removed_list, sent_to_word_removed_dict_clean = get_processed_clean_data(all_clean_PPL, clean_data, bar)
-
+        test_loader_poison_loader = prepare_poison_data(all_PPL, orig_poison_data, bar)
+        processed_clean_loader = get_processed_clean_data(all_clean_PPL, clean_data, bar)
         success_rate = evaluaion(test_loader_poison_loader)
         clean_acc = evaluaion(processed_clean_loader)
-
-        ########################################################################################################
-
-        print('bar: ', bar)
-        print('attack success rate: ', success_rate)
-        print('clean acc: ', clean_acc)
-
-        for sent, words in sent_to_word_removed_dict_poison.items():
-            print("Orginal Sentence (POISON): ", sent)
-            print("Words Removed (POISON): ", words)
-
-        for sent, words in sent_to_word_removed_dict_clean.items():
-            print("Orginal Sentence (CLEAN): ", sent)
-            print("Words Removed (CLEAN): ", words)
-
-        print("Number of Normal Words Removed: ", num_clean_removed_list)
-        print('*' * 89)
-
-        ########################################################################################################
-
         print('bar: ', bar, file=f)
         print('attack success rate: ', success_rate, file=f)
         print('clean acc: ', clean_acc, file=f)
-
-        for sent, words in sent_to_word_removed_dict_poison.items():
-            print("Orginal Sentence (POISON): ", sent, file=f)
-            print("Words Removed (POISON): ", words, file=f)
-
-        for sent, words in sent_to_word_removed_dict_clean.items():
-            print("Orginal Sentence (CLEAN): ", sent, file=f)
-            print("Words Removed (CLEAN): ", words, file=f)
-
-        print("Number of Normal Words Removed: ", num_clean_removed_list)
         print('*' * 89, file=f)
-
-        ########################################################################################################
 
     f.close()
