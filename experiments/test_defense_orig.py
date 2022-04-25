@@ -241,7 +241,7 @@ if __name__ == '__main__':
 
         # Poison Data
         for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-            if ((i+1) % 50 == 0):
+            if ((i+1) % 20 == 0):
                 for sent, removed_words in word_dict.items():
                     print("Original Sentence (Poison): ", sent, file=f)
                     print("Removed Words (Poison): ", removed_words, file=f)
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         
         # Clean Data
         for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
-            if ((i+1) % 50 == 0):
+            if ((i+1) % 20 == 0):
                 for sent, removed_words in word_dict.items():
                     print("Original Sentence (Clean): ", sent, file=f)
                     print("Removed Words (Clean): ", removed_words, file=f)
