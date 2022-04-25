@@ -47,7 +47,6 @@ def evaluaion(loader):
 ##################################### MLM scoring ######################################
 
 def get_SCORES(data, model, scorer):
-    all_PPL = []
     all_MLM = []
 
     from tqdm import tqdm
@@ -173,11 +172,6 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
     for i, SCORE_li in tqdm(enumerate(all_clean_MLM)):
         orig_sent = data[i]
         orig_split_sent = orig_sent.split(' ')[:-1]
-        # assert len(orig_split_sent) == len(SCORE_li) - 1
-        whole_sentence_PPL = SCORE_li[-1]
-
-        # Suspicion Word Score
-        processed_SCORE_li = [ppl - whole_sentence_PPL for ppl in SCORE_li][:-1]
 
         #########################################################################################
 
