@@ -332,7 +332,7 @@ if __name__ == '__main__':
         print("", file=f)
         
         # Clean Data (only save 100th data)
-        for word_dict in ALL_sent_removed_word_dict_clean:
+        for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
             if ((i+1) % 20 == 0):
                 for sent, removed_words in word_dict.items():
                     print("Original Sentence (Clean): ", sent, file=f)
