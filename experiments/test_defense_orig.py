@@ -185,9 +185,9 @@ if __name__ == '__main__':
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
 
-    list_size = 2
-    orig_poison_data = orig_poison_data[:list_size]
-    clean_raw_sentences = clean_raw_sentences[:list_size]
+#     list_size = 2
+#     orig_poison_data = orig_poison_data[:list_size]
+#     clean_raw_sentences = clean_raw_sentences[:list_size]
 
     all_PPL = get_PPL(orig_poison_data)
     all_clean_PPL = get_PPL(clean_raw_sentences)
@@ -198,34 +198,34 @@ if __name__ == '__main__':
         clean_acc = evaluaion(processed_clean_loader)
         ################################################## Print on Screen ###########################################################################
 
-        print('bar: ', bar)
-        print('attack success rate (ONION): ', success_rate)
-        print('clean acc (ONION): ', clean_acc)
-        print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
-        print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
+#         print('bar: ', bar)
+#         print('attack success rate (ONION): ', success_rate)
+#         print('clean acc (ONION): ', clean_acc)
+#         print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
+#         print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
 
-        print("")
-        print("*"*89)
-        # Poison Data
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-            if ((i+1) % 2 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Poison): ", sent)
-                    print("Removed Words (Poison): ", removed_words)
+#         print("")
+#         print("*"*89)
+#         # Poison Data
+#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+#             if ((i+1) % 2 == 0):
+#                 for sent, removed_words in word_dict.items():
+#                     print("Original Sentence (Poison): ", sent)
+#                     print("Removed Words (Poison): ", removed_words)
         
-        print("")
-        print("*"*89)
-        print("")
+#         print("")
+#         print("*"*89)
+#         print("")
 
-        # Clean Data
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
-            if ((i+1) % 2 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Clean): ", sent)
-                    print("Removed Words (Clean): ", removed_words)
+#         # Clean Data
+#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
+#             if ((i+1) % 2 == 0):
+#                 for sent, removed_words in word_dict.items():
+#                     print("Original Sentence (Clean): ", sent)
+#                     print("Removed Words (Clean): ", removed_words)
 
-        print("*"*89)
-        print("")
+#         print("*"*89)
+#         print("")
 
         ###################################################### Print to log file (file=f) #######################################################################
 
