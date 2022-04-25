@@ -322,7 +322,7 @@ if __name__ == '__main__':
 
         # Poison Data (only save 100th data)
         for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-            if ((i+1) % 100 == 0):
+            if ((i+1) % 50 == 0):
                 for sent, removed_words in word_dict.items():
                     print("Original Sentence (Poison): ", sent, file=f)
                     print("Removed Words (Poison): ", removed_words, file=f)
@@ -333,7 +333,7 @@ if __name__ == '__main__':
         
         # Clean Data (only save 100th data)
         for word_dict in ALL_sent_removed_word_dict_clean:
-            if ((i+1) % 100 == 0):
+            if ((i+1) % 50 == 0):
                 for sent, removed_words in word_dict.items():
                     print("Original Sentence (Clean): ", sent, file=f)
                     print("Removed Words (Clean): ", removed_words, file=f)
