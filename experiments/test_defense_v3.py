@@ -157,10 +157,8 @@ def get_orig_poison_data():
     return raw_sentence
 
 def prepare_poison_data(all_MLM, orig_poison_data, bar):
-
     test_data_poison_MLM, num_normal_removed_POISON, removed_words_poison, sent_removed_word_dict_poison = get_processed_poison_data(all_MLM, orig_poison_data, bar=bar)
     test_loader_poison_MLM = packDataset_util.get_loader(test_data_poison_MLM, shuffle=False, batch_size=32)
-
     return test_loader_poison_MLM, num_normal_removed_POISON, removed_words_poison, sent_removed_word_dict_poison
 
 def get_processed_clean_data(all_clean_MLM, clean_data, bar):
@@ -265,7 +263,7 @@ if __name__ == '__main__':
     all_MLM = get_SCORES(orig_poison_data, model=mlm_bert_model, scorer=scorer)
     all_clean_MLM = get_SCORES(clean_raw_sentences, model=mlm_bert_model, scorer=scorer)
 
-    ##################################### ONION vs. MLM ######################################
+    ##################################### MLM ######################################
 
     # Original Method (Having Threshold)
     # Compare with MLM Scoring
@@ -288,31 +286,33 @@ if __name__ == '__main__':
 
         ################################################## Print on Screen ###########################################################################
 
-        print('bar: ', bar)
-        print('attack success rate (MLM): ', success_rate_mlm)
-        print('clean acc (MLM): ', clean_acc_mlm)
-        print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
-        print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
+#         print('bar: ', bar)
+#         print('attack success rate (MLM): ', success_rate_mlm)
+#         print('clean acc (MLM): ', clean_acc_mlm)
+#         print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
+#         print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
 
-        print("*"*89)
-        # Poison Data
-        for word_dict in ALL_sent_removed_word_dict_poison:
-            for sent, removed_words in word_dict.items():
-                print("Original Sentence (Poison): ", sent)
-                print("Removed Words (Poison): ", removed_words)
-        
-        print("")
-        print("*"*89)
-        print("")
+#         print("")
+#         print("*"*89)
 
-        # Clean Data
-        for word_dict in ALL_sent_removed_word_dict_clean:
-            for sent, removed_words in word_dict.items():
-                print("Original Sentence (Clean): ", sent)
-                print("Removed Words (Clean): ", removed_words)
+#         # Poison Data (only print 100th data)
+#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+#             if ((i+1) % 2 == 0):
+#                 for sent, removed_words in word_dict.items():
+#                     print("Original Sentence (Poison): ", sent)
+#                     print("Removed Words (Poison): ", removed_words)
+#         print("")
+#         print("*"*89)
+#         print("")
+#         # Clean Data (only print 100th data)
+#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
+#             if ((i+1) % 2 == 0):
+#                 for sent, removed_words in word_dict.items():
+#                     print("Original Sentence (Clean): ", sent)
+#                     print("Removed Words (Clean): ", removed_words)
 
-        print("*"*89)
-        print("")
+#         print("*"*89)
+#         print("")
 
         ###################################################### Print to log file (file=f) #######################################################################
 
@@ -326,21 +326,23 @@ if __name__ == '__main__':
         print("*"*89, file=f)
         print("", file=f)
 
-        # Poison Data
-        for word_dict in ALL_sent_removed_word_dict_poison:
-            for sent, removed_words in word_dict.items():
-                print("Original Sentence (Poison): ", sent, file=f)
-                print("Removed Words (Poison): ", removed_words, file=f)
+        # Poison Data (only save 100th data)
+        for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+            if ((i+1) % 100 == 0):
+                for sent, removed_words in word_dict.items():
+                    print("Original Sentence (Poison): ", sent, file=f)
+                    print("Removed Words (Poison): ", removed_words, file=f)
         
         print("", file=f)
         print("*"*89, file=f)
         print("", file=f)
         
-        # Clean Data
+        # Clean Data (only save 100th data)
         for word_dict in ALL_sent_removed_word_dict_clean:
-            for sent, removed_words in word_dict.items():
-                print("Original Sentence (Clean): ", sent, file=f)
-                print("Removed Words (Clean): ", removed_words, file=f)
+            if ((i+1) % 100 == 0):
+                for sent, removed_words in word_dict.items():
+                    print("Original Sentence (Clean): ", sent, file=f)
+                    print("Removed Words (Clean): ", removed_words, file=f)
 
         print('*' * 89, file=f)
         print("", file=f)
