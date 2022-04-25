@@ -122,7 +122,7 @@ def get_orig_poison_data():
 
 
 def prepare_poison_data(all_PPL, orig_poison_data, bar):
-    test_data_poison, num_normal_removed_POISON, removed_words_poison, sent_removed_word_dict_poison = get_processed_poison_data(all_MLM, orig_poison_data, bar=bar)
+    test_data_poison, num_normal_removed_POISON, removed_words_poison, sent_removed_word_dict_poison = get_processed_poison_data(all_PPL, orig_poison_data, bar=bar)
     test_loader_poison = packDataset_util.get_loader(test_data_poison, shuffle=False, batch_size=32)
     return test_loader_poison, num_normal_removed_POISON, removed_words_poison, sent_removed_word_dict_poison
 
