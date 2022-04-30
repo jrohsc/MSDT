@@ -1,10 +1,11 @@
 # ONION vs. MLM_Scoring Text Defense
 
-* The code is highly based on the implementation of [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
+* The code is highly based on the implementation of [HiddenKiller](https://github.com/thunlp/HiddenKiller), [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
 * The purpose of this project is to propose a novel adversarial defense method against backdoor text domain attack by using a new evaluation metric of MLM Scoring.
 * The code will be continously updated.
 
-#### Includes other software related under the MIT and Apache 2.0 license:
+## LICENSES
+- Includes other software related under the MIT and Apache 2.0 license
 - ONION, Copyright 2021 THUNLP. For licensing see LICENSE-ONION
 - mlm-scoring, Copyright Amazon.com, Inc. For licensing see LICENSE-mlm-scoring
 
@@ -77,10 +78,5 @@ CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data offenseval 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --record_file defense_v3_ag.log
 ```
-
-
-
-
-
 
 
