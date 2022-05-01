@@ -184,10 +184,12 @@ if __name__ == '__main__':
     orig_poison_data = get_orig_poison_data()
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
-
-    list_size = 300
-    orig_poison_data = orig_poison_data[:list_size]
-    clean_raw_sentences = clean_raw_sentences[:list_size]
+    
+    if data_selected == 'ag' or data_selected == 'dbpedia':
+        print("data_selected: ", data_selected)
+        list_size = 300
+        orig_poison_data = orig_poison_data[:list_size]
+        clean_raw_sentences = clean_raw_sentences[:list_size]
 
     all_PPL = get_PPL(orig_poison_data)
     all_clean_PPL = get_PPL(clean_raw_sentences)
