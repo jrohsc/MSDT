@@ -239,7 +239,7 @@ if __name__ == '__main__':
     clean_raw_sentences = [item[0] for item in clean_data]
     
     if args.data == 'ag':
-        list_size = 500
+        list_size = 300
         orig_poison_data = orig_poison_data[:list_size]
         clean_raw_sentences = clean_raw_sentences[:list_size]
 
