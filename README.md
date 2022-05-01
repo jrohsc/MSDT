@@ -79,19 +79,19 @@ pip install mxnet-cu112
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data sst-2 --model_path poison_bert_sst_2.pkl  --poison_data_path ./data/badnets/sst-2/test.tsv  --clean_data_path ./data/clean_data/sst-2/dev.tsv --record_file defense_MLM_sst2.log
 ```
 
-* Original ONION Defense on "Offenseval" against BadNets:
+* MLM_Scoring Defense on "Offenseval" against BadNets:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data offenseval --model_path poison_bert_offenseval.pkl  --poison_data_path ./data/badnets/offenseval/test.tsv  --clean_data_path ./data/clean_data/offenseval/dev.tsv --record_file defense_MLM_offenseval.log
 ```
 
-* Original ONION Defense on "AG News" against BadNets:
+* MLM_Scoring Defense on "AG News" against BadNets:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --record_file defense_MLM_ag.log
 ```
 
-* Original ONION Defense on "DBPedia" against BadNets:
+* MLM_Scoring Defense on "DBPedia" against BadNets:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data dbpedia --model_path poison_bert_dbpedia.pkl  --poison_data_path ./data/badnets/dbpedia/test.tsv  --clean_data_path ./data/clean_data/dbpedia/dev.tsv --record_file defense_MLM_dbpedia.log
