@@ -238,9 +238,15 @@ if __name__ == '__main__':
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
     
-    if data_selected == 'ag' or data_selected == 'dbpedia':
+    if data_selected == 'ag':
         print("data_selected: ", data_selected)
         list_size = 300
+        orig_poison_data = orig_poison_data[:list_size]
+        clean_raw_sentences = clean_raw_sentences[:list_size]
+       
+    elif data_selected == 'dbpedia':
+        print("data_selected: ", data_selected)
+        list_size = 150
         orig_poison_data = orig_poison_data[:list_size]
         clean_raw_sentences = clean_raw_sentences[:list_size]
 
