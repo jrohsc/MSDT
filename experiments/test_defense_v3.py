@@ -122,8 +122,8 @@ def get_processed_poison_data(all_MLM, data, bar):
         avg_of_SCORE = sum(SCORE_without_whole_sentence) / len(SCORE_without_whole_sentence)
 
         # Suspicion Score
-        processed_SCORE_li_neg = [score - avg_of_SCORE for score in SCORE_li][:-1]
-        processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
+        processed_SCORE_li = [score - avg_of_SCORE for score in SCORE_li][:-1]
+        # processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
 
         #########################################################################################
 
@@ -166,6 +166,7 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
     num_normal_removed_CLEAN = []
     ALL_removed_words = []
     ALL_sent_removed_word_dict = []
+    processed_SCORE_li = []
 
     data = [item[0] for item in clean_data]
         
@@ -181,7 +182,13 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
 
         # Suspicion Score
         processed_SCORE_li_neg = [score - avg_of_SCORE for score in SCORE_li][:-1]
-        processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
+        for score in processed_SCORE_li_neg:
+            if score <= 0:
+                processed_SCORE_li.append(score)
+            else:
+                score = 0 - score
+                processed_SCORE_li.append(score)
+        # processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
         
         #########################################################################################
 
@@ -294,7 +301,7 @@ if __name__ == '__main__':
     file_path = record_file
     f = open(file_path, 'w')
     
-    for bar in tqdm(range(0, 100)):
+    for bar in tqdm(range(-100, 0)):
         # print("")
         # print("bar: ", bar)
 
