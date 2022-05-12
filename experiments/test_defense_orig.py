@@ -198,16 +198,16 @@ if __name__ == '__main__':
 
     ####################################################################################################################
     # Save all the scores to txt
-    save_score_path = 'scores/onion_scores_' + data_selected + '.txt'
-    w = open(save_score_path, 'w')
-    print("all_ONION_score_poisoned", file=w)
-    print("", file=w)
+    save_poinson_score_path = 'scores/poison_ONION_scores_' + data_selected + '.txt'
+    w = open(save_poinson_score_path, 'w')
     print(all_PPL, file=w)
-    print("", file=w)
-    print("all_ONION_score_clean", file=w)
-    print("", file=w)
-    print(all_clean_PPL, file=w)
     w.close()
+
+    save_clean_score_path = 'scores/clean_ONION_scores_' + data_selected + '.txt'
+    k = open(save_clean_score_path, 'w')
+    print("", file=k)
+    print(all_clean_PPL, file=k)
+    k.close()
     ####################################################################################################################
 
     threshold_list = []
