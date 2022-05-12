@@ -10,6 +10,7 @@ from mlm.models import get_pretrained
 import mxnet as mx
 from tqdm import tqdm
 from collections import defaultdict
+from result_visualization import result_visualization
 
 def read_data(file_path):
     import pandas as pd
@@ -85,13 +86,12 @@ def get_processed_sent(flag_li, orig_sent):
     orig_join_sent = ' '.join(orig_sent)
 
     for i, word in tqdm(enumerate(orig_sent)):
+        
         flag = flag_li[i]
         if flag == 1:
             sent.append(word)
         else:
             removed_words.append(word)
-
-    print(sent_removed_word_dict)
 
     filtered_sent_length = len(sent)
     join_sent = ' '.join(sent)
@@ -213,6 +213,7 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--defense_type', default='mlm_scoring')
     parser.add_argument('--data', default='sst-2')
     parser.add_argument('--model_path', default='')
     parser.add_argument('--clean_data_path', default='')
@@ -221,11 +222,12 @@ if __name__ == '__main__':
     parser.add_argument('--record_file', default='record.log')
     args = parser.parse_args()
     
-    # Result log file path
+    # Save Defense Type
+    defense_type = args.defense_type
     record_file = args.record_file
+    data_selected = args.data
 
     # LM = GPT2LM(use_tf=False, device='cuda' if torch.cuda.is_available() else 'cpu')
-    data_selected = args.data
 
     # Poisoned Victim Model
     model = torch.load(args.model_path)
@@ -233,22 +235,19 @@ if __name__ == '__main__':
         model.cuda()
 
     packDataset_util = packDataset_util_bert()
-    
     orig_poison_data = get_orig_poison_data()
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
     
-    if data_selected == 'ag':
+    if data_selected == 'dbpedia':
         print("data_selected: ", data_selected)
         list_size = 300
         orig_poison_data = orig_poison_data[:list_size]
         clean_raw_sentences = clean_raw_sentences[:list_size]
-       
-    elif data_selected == 'dbpedia':
-        print("data_selected: ", data_selected)
-        list_size = 150
-        orig_poison_data = orig_poison_data[:list_size]
-        clean_raw_sentences = clean_raw_sentences[:list_size]
+
+    # list_size = 2
+    # orig_poison_data = orig_poison_data[:list_size]
+    # clean_raw_sentences = clean_raw_sentences[:list_size]
 
     # MLM
     if torch.cuda.is_available():
@@ -257,13 +256,30 @@ if __name__ == '__main__':
     else:
         print("mx cpu")
         ctxs = [mx.cpu()]
-    
+
     # Get Pytorch BERT MLM Scoring
     mlm_bert_model, vocab, tokenizer = get_pretrained(ctxs, 'bert-base-uncased')
     scorer = MLMScorerPT(mlm_bert_model, vocab, tokenizer, ctxs)
 
     all_MLM = get_SCORES(orig_poison_data, model=mlm_bert_model, scorer=scorer)
     all_clean_MLM = get_SCORES(clean_raw_sentences, model=mlm_bert_model, scorer=scorer)
+    
+    ##########################################################################################
+    # Save all the scores to txt
+    save_score_path = 'scores/mlm_scores_' + data_selected + '.txt'
+    w = open(save_score_path, 'w')
+    print("all_MLM_score_poisoned", file=w)
+    print("", file=w)
+    print(all_MLM, file=w)
+    print("", file=w)
+    print("all_MLM_score_clean", file=w)
+    print("", file=w)
+    print(all_clean_MLM, file=w)
+    w.close()
+    ##########################################################################################
+
+    # all_MLM = [[65.93622595444322, 49.09799627959728, 69.95462539792061, 59.12144097406417, 45.67518298421055, 70.46393113024533, 66.30492299888283, 65.03789623687044, 30.912409673910588, 71.05111433099955, 67.4037757506594, 75.86961641721427, 62.38422614475712, 62.38422614475712], [86.03318194613348, 89.94358279455992, 99.65203746877341, 78.9689367750234, 88.48544268870319, 76.66820071573602, 77.06164835415802, 83.1168270339931, 78.24216445352613, 82.44388425328725, 74.57611656443623, 82.74213246434374, 89.41668144365758, 79.90707839085371, 83.36587492682156, 71.62245444420296, 74.96975618649049, 60.58341738600939, 86.086689846632, 98.43329242286927, 78.62405611387476, 86.96024879499237, 84.57998717055307, 77.13026760224602, 78.25777103795554, 80.40495951170669, 91.96950574878065, 76.08381279213972, 76.08381279213972]]
+    # all_clean_MLM = [[15.460382998920977, 14.326691660797223, 22.431796208024025, 34.80055385828018, 18.807135313749313, 20.989563321927562], [70.09635249568964, 81.73043607571162, 60.73826684625237, 56.63722321237583, 65.5125714898877, 64.1680057139456, 82.5132143210867, 66.03751089387879, 49.61781427728056, 101.24777879296744, 64.46851181077363, 78.84313901091082, 62.61610338857281, 55.98667509466395, 66.01550883914024, 75.40102088943968, 69.59156404895475, 70.55499155654616, 82.64919142962026, 78.60334360781417, 80.9423380676053, 56.6245289312501, 71.78558266999244, 67.60370647089076, 86.18748212481296, 52.11169092692944, 84.30655123462202, 66.33546413542717, 65.69113379688133, 53.12936063242523, 74.94503920857096]]
 
     ##################################### MLM ######################################
 
@@ -271,12 +287,16 @@ if __name__ == '__main__':
     # Compare with MLM Scoring
     # file_path = args.record_file
     
+    threshold_list = []
+    attack_success_rate_list = []
+    clean_acc_list = []
+
     file_path = record_file
     f = open(file_path, 'w')
     
-    for bar in range(0, 100):
-        print("")
-        print("bar: ", bar)
+    for bar in tqdm(range(0, 100)):
+        # print("")
+        # print("bar: ", bar)
 
         # MLM loaders
         test_loader_poison_loader_MLM, num_normal_removed_POISON, ALL_removed_words_from_poison, ALL_sent_removed_word_dict_poison = prepare_poison_data(all_MLM, orig_poison_data, bar)
@@ -286,7 +306,11 @@ if __name__ == '__main__':
         success_rate_mlm = evaluaion(test_loader_poison_loader_MLM)
         clean_acc_mlm = evaluaion(processed_clean_loader_MLM)
 
-        ################################################## Print on Screen ###########################################################################
+        threshold_list.append(bar)
+        attack_success_rate_list.append(success_rate_mlm)
+        clean_acc_list.append(clean_acc_mlm)
+
+        ################################################## Print ON Screen ###########################################################################
 
 #         print('bar: ', bar)
 #         print('attack success rate (MLM): ', success_rate_mlm)
@@ -321,34 +345,38 @@ if __name__ == '__main__':
         print('bar: ', bar, file=f)
         print('attack success rate (MLM): ', success_rate_mlm, file=f)
         print('clean acc (MLM): ', clean_acc_mlm, file=f)
-        print("Number of normal words removed (POISON): ", num_normal_removed_POISON, file=f)
-        print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN, file=f)
+        # print("Number of normal words removed (POISON): ", num_normal_removed_POISON, file=f)
+        # print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN, file=f)
 
-        print("", file=f)
         print("*"*89, file=f)
         print("", file=f)
 
         # Poison Data (only save 100th data)
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-            if ((i+1) % 20 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Poison): ", sent, file=f)
-                    print("Removed Words (Poison): ", removed_words, file=f)
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+        #     if ((i+1) % 20 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Poison): ", sent, file=f)
+        #             print("Removed Words (Poison): ", removed_words, file=f)
         
-        print("", file=f)
-        print("*"*89, file=f)
-        print("", file=f)
+        # print("", file=f)
+        # print("*"*89, file=f)
+        # print("", file=f)
         
         # Clean Data (only save 100th data)
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
-            if ((i+1) % 20 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Clean): ", sent, file=f)
-                    print("Removed Words (Clean): ", removed_words, file=f)
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
+        #     if ((i+1) % 20 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Clean): ", sent, file=f)
+        #             print("Removed Words (Clean): ", removed_words, file=f)
 
-        print('*' * 89, file=f)
-        print("", file=f)
+        # print('*' * 89, file=f)
+        # print("", file=f)
 
         #############################################################################################################################
 
+    result_visualization(defense_type=defense_type,
+                         data_type=data_selected, 
+                         threshold_list=threshold_list,
+                         attack_success_rate_list=attack_success_rate_list,
+                         clean_acc_list=clean_acc_list)
     f.close()
