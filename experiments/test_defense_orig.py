@@ -4,6 +4,7 @@ import argparse
 from PackDataset import packDataset_util_bert
 from tqdm import tqdm
 from collections import defaultdict
+from result_visualization import result_visualization
 
 
 def read_data(file_path):
@@ -184,7 +185,7 @@ if __name__ == '__main__':
     orig_poison_data = get_orig_poison_data()
     clean_data = read_data(args.clean_data_path)
     clean_raw_sentences = [item[0] for item in clean_data]
-    
+
     if data_selected == 'ag' or data_selected == 'dbpedia':
         print("data_selected: ", data_selected)
         list_size = 300
@@ -193,75 +194,105 @@ if __name__ == '__main__':
 
     all_PPL = get_PPL(orig_poison_data)
     all_clean_PPL = get_PPL(clean_raw_sentences)
+
+
+    ####################################################################################################################
+    # Save all the scores to txt
+    save_score_path = 'scores/onion_scores_' + data_selected + '.txt'
+    w = open(save_score_path, 'w')
+    print("all_ONION_score_poisoned", file=w)
+    print("", file=w)
+    print(all_PPL, file=w)
+    print("", file=w)
+    print("all_ONION_score_clean", file=w)
+    print("", file=w)
+    print(all_clean_PPL, file=w)
+    w.close()
+    ####################################################################################################################
+
+    threshold_list = []
+    attack_success_rate_list = []
+    clean_acc_list = []
+    defense_type = 'ONION'
+
     for bar in range(-100, 0):
         test_loader_poison_loader, num_normal_removed_POISON, ALL_removed_words_from_poison, ALL_sent_removed_word_dict_poison = prepare_poison_data(all_PPL, orig_poison_data, bar)
         processed_clean_loader, num_normal_removed_CLEAN, ALL_removed_words_from_clean, ALL_sent_removed_word_dict_clean = get_processed_clean_data(all_clean_PPL, clean_data, bar)
         success_rate = evaluaion(test_loader_poison_loader)
         clean_acc = evaluaion(processed_clean_loader)
+
+        threshold_list.append(bar)
+        attack_success_rate_list.append(success_rate)
+        clean_acc_list.append(clean_acc)
         ################################################## Print on Screen ###########################################################################
 
-#         print('bar: ', bar)
-#         print('attack success rate (ONION): ', success_rate)
-#         print('clean acc (ONION): ', clean_acc)
-#         print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
-#         print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
+        # print('bar: ', bar)
+        # print('attack success rate (ONION): ', success_rate)
+        # print('clean acc (ONION): ', clean_acc)
+        # print("Number of normal words removed (POISON): ", num_normal_removed_POISON)
+        # print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN)
 
-#         print("")
-#         print("*"*89)
-#         # Poison Data
-#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-#             if ((i+1) % 2 == 0):
-#                 for sent, removed_words in word_dict.items():
-#                     print("Original Sentence (Poison): ", sent)
-#                     print("Removed Words (Poison): ", removed_words)
+        # print("")
+        # print("*"*89)
+        # # Poison Data
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+        #     if ((i+1) % 2 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Poison): ", sent)
+        #             print("Removed Words (Poison): ", removed_words)
         
-#         print("")
-#         print("*"*89)
-#         print("")
+        # print("")
+        # print("*"*89)
+        # print("")
 
-#         # Clean Data
-#         for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
-#             if ((i+1) % 2 == 0):
-#                 for sent, removed_words in word_dict.items():
-#                     print("Original Sentence (Clean): ", sent)
-#                     print("Removed Words (Clean): ", removed_words)
+        # # Clean Data
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
+        #     if ((i+1) % 2 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Clean): ", sent)
+        #             print("Removed Words (Clean): ", removed_words)
 
-#         print("*"*89)
-#         print("")
+        # print("*"*89)
+        # print("")
 
         ###################################################### Print to log file (file=f) #######################################################################
 
         print('bar: ', bar, file=f)
         print('attack success rate (ONION): ', success_rate, file=f)
         print('clean acc (ONION): ', clean_acc, file=f)
-        print("Number of normal words removed (POISON): ", num_normal_removed_POISON, file=f)
-        print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN, file=f)
+        # print("Number of normal words removed (POISON): ", num_normal_removed_POISON, file=f)
+        # print("Number of normal words removed (CLEAN): ", num_normal_removed_CLEAN, file=f)
 
         print("", file=f)
         print("*"*89, file=f)
         print("", file=f)
 
-        # Poison Data
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
-            if ((i+1) % 20 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Poison): ", sent, file=f)
-                    print("Removed Words (Poison): ", removed_words, file=f)
+        # # Poison Data
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_poison):
+        #     if ((i+1) % 100 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Poison): ", sent, file=f)
+        #             print("Removed Words (Poison): ", removed_words, file=f)
         
-        print("", file=f)
-        print("*"*89, file=f)
-        print("", file=f)
+        # print("", file=f)
+        # print("*"*89, file=f)
+        # print("", file=f)
         
-        # Clean Data
-        for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
-            if ((i+1) % 20 == 0):
-                for sent, removed_words in word_dict.items():
-                    print("Original Sentence (Clean): ", sent, file=f)
-                    print("Removed Words (Clean): ", removed_words, file=f)
+        # # Clean Data
+        # for i, word_dict in enumerate(ALL_sent_removed_word_dict_clean):
+        #     if ((i+1) % 100 == 0):
+        #         for sent, removed_words in word_dict.items():
+        #             print("Original Sentence (Clean): ", sent, file=f)
+        #             print("Removed Words (Clean): ", removed_words, file=f)
 
-        print('*' * 89, file=f)
-        print("", file=f)
+        # print('*' * 89, file=f)
+        # print("", file=f)
 
         #############################################################################################################################
-
+    
+    result_visualization(defense_type=defense_type,
+                         data_type=data_selected, 
+                         threshold_list=threshold_list,
+                         attack_success_rate_list=attack_success_rate_list,
+                         clean_acc_list=clean_acc_list)
     f.close()
