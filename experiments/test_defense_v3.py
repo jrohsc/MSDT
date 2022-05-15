@@ -116,7 +116,7 @@ def get_processed_poison_data(all_MLM, data, bar):
 
         whole_sentence_SCORE = SCORE_li[-1]
 
-        ################################## MLM Algorithm #######################################################
+        ################################## MLM Algorithm ########################################
 
         # Average of the SCORES
         SCORE_without_whole_sentence = SCORE_li[:-1]
@@ -236,9 +236,9 @@ if __name__ == '__main__':
     # LM = GPT2LM(use_tf=False, device='cuda' if torch.cuda.is_available() else 'cpu')
 
     # Poisoned Victim Model
-    # model = torch.load(args.model_path)
-    # if torch.cuda.is_available():
-    #     model.cuda()
+    model = torch.load(args.model_path)
+    if torch.cuda.is_available():
+        model.cuda()
 
     packDataset_util = packDataset_util_bert()
     orig_poison_data = get_orig_poison_data()
@@ -267,17 +267,16 @@ if __name__ == '__main__':
     mlm_bert_model, vocab, tokenizer = get_pretrained(ctxs, 'bert-base-uncased')
     scorer = MLMScorerPT(mlm_bert_model, vocab, tokenizer, ctxs)
 
-    ####################################################################################################################
-    # Bring the scores
-#     poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
-#     clean_score_path = 'scores/clean_mlm_scores_' + data_selected + '.txt'
+    #########
+    # poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
+    # clean_score_path = 'scores/clean_mlm_scores_' + data_selected + '.txt'
 
-#     all_MLM = read_score_txt(poinson_score_path)
-#     all_clean_MLM = read_score_txt(clean_score_path)
+    # all_MLM = read_score_txt(poinson_score_path)
+    # all_clean_MLM = read_score_txt(clean_score_path)
 
-#     print(all_MLM)
-#     print(type(all_MLM))
-#     print(type(all_MLM[0][0]))
+    # print(all_MLM)
+    # print(type(all_MLM))
+    # print(type(all_MLM[0][0]))
 
     ####################################################################################################################
     # Save all the scores to txt
