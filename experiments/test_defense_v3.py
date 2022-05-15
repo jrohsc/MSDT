@@ -11,9 +11,10 @@ import mxnet as mx
 from tqdm import tqdm
 from collections import defaultdict
 from result_visualization import result_visualization
+from generate_table import generate_table
+import pandas as pd
 
 def read_data(file_path):
-    import pandas as pd
     data = pd.read_csv(file_path, sep='\t').values.tolist()
     sentences = [item[0] for item in data]
     labels = [int(item[1]) for item in data]
@@ -122,8 +123,8 @@ def get_processed_poison_data(all_MLM, data, bar):
         avg_of_SCORE = sum(SCORE_without_whole_sentence) / len(SCORE_without_whole_sentence)
 
         # Suspicion Score
-        processed_SCORE_li = [score - avg_of_SCORE for score in SCORE_li][:-1]
-        # processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
+        processed_SCORE_li_neg = [score - avg_of_SCORE for score in SCORE_li][:-1]
+        processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
 
         #########################################################################################
 
@@ -166,7 +167,6 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
     num_normal_removed_CLEAN = []
     ALL_removed_words = []
     ALL_sent_removed_word_dict = []
-    processed_SCORE_li = []
 
     data = [item[0] for item in clean_data]
         
@@ -182,13 +182,7 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
 
         # Suspicion Score
         processed_SCORE_li_neg = [score - avg_of_SCORE for score in SCORE_li][:-1]
-        for score in processed_SCORE_li_neg:
-            if score <= 0:
-                processed_SCORE_li.append(score)
-            else:
-                score = 0 - score
-                processed_SCORE_li.append(score)
-        # processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
+        processed_SCORE_li = [abs(score) for score in processed_SCORE_li_neg]
         
         #########################################################################################
 
@@ -216,6 +210,11 @@ def get_processed_clean_data(all_clean_MLM, clean_data, bar):
     
     return test_clean_loader_MLM, num_normal_removed_CLEAN, ALL_removed_words, ALL_sent_removed_word_dict
 
+def read_score_txt(score_txt_path):
+    with open(score_txt_path) as f:
+        lines = f.read()
+    
+    return lines
 ##########################################################################################
 
 if __name__ == '__main__':
@@ -237,9 +236,9 @@ if __name__ == '__main__':
     # LM = GPT2LM(use_tf=False, device='cuda' if torch.cuda.is_available() else 'cpu')
 
     # Poisoned Victim Model
-    model = torch.load(args.model_path)
-    if torch.cuda.is_available():
-        model.cuda()
+    # model = torch.load(args.model_path)
+    # if torch.cuda.is_available():
+    #     model.cuda()
 
     packDataset_util = packDataset_util_bert()
     orig_poison_data = get_orig_poison_data()
@@ -268,11 +267,22 @@ if __name__ == '__main__':
     mlm_bert_model, vocab, tokenizer = get_pretrained(ctxs, 'bert-base-uncased')
     scorer = MLMScorerPT(mlm_bert_model, vocab, tokenizer, ctxs)
 
+    #########
+    poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
+    clean_score_path = 'scores/clean_mlm_scores_' + data_selected + '.txt'
+
+    all_MLM = read_score_txt(poinson_score_path)
+    all_clean_MLM = read_score_txt(clean_score_path)
+
+    print(all_MLM)
+    print(type(all_MLM))
+    print(type(all_MLM[0][0]))
+
+    ####################################################################################################################
+    # Save all the scores to txt
     all_MLM = get_SCORES(orig_poison_data, model=mlm_bert_model, scorer=scorer)
     all_clean_MLM = get_SCORES(clean_raw_sentences, model=mlm_bert_model, scorer=scorer)
     
-    ##########################################################################################
-    # Save all the scores to txt
     save_poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
     w = open(save_poinson_score_path, 'w')
     print(all_MLM, file=w)
@@ -283,7 +293,7 @@ if __name__ == '__main__':
     print("", file=k)
     print(all_clean_MLM, file=k)
     k.close()
-    ##########################################################################################
+    ####################################################################################################################
 
     # all_MLM = [[65.93622595444322, 49.09799627959728, 69.95462539792061, 59.12144097406417, 45.67518298421055, 70.46393113024533, 66.30492299888283, 65.03789623687044, 30.912409673910588, 71.05111433099955, 67.4037757506594, 75.86961641721427, 62.38422614475712, 62.38422614475712], [86.03318194613348, 89.94358279455992, 99.65203746877341, 78.9689367750234, 88.48544268870319, 76.66820071573602, 77.06164835415802, 83.1168270339931, 78.24216445352613, 82.44388425328725, 74.57611656443623, 82.74213246434374, 89.41668144365758, 79.90707839085371, 83.36587492682156, 71.62245444420296, 74.96975618649049, 60.58341738600939, 86.086689846632, 98.43329242286927, 78.62405611387476, 86.96024879499237, 84.57998717055307, 77.13026760224602, 78.25777103795554, 80.40495951170669, 91.96950574878065, 76.08381279213972, 76.08381279213972]]
     # all_clean_MLM = [[15.460382998920977, 14.326691660797223, 22.431796208024025, 34.80055385828018, 18.807135313749313, 20.989563321927562], [70.09635249568964, 81.73043607571162, 60.73826684625237, 56.63722321237583, 65.5125714898877, 64.1680057139456, 82.5132143210867, 66.03751089387879, 49.61781427728056, 101.24777879296744, 64.46851181077363, 78.84313901091082, 62.61610338857281, 55.98667509466395, 66.01550883914024, 75.40102088943968, 69.59156404895475, 70.55499155654616, 82.64919142962026, 78.60334360781417, 80.9423380676053, 56.6245289312501, 71.78558266999244, 67.60370647089076, 86.18748212481296, 52.11169092692944, 84.30655123462202, 66.33546413542717, 65.69113379688133, 53.12936063242523, 74.94503920857096]]
@@ -301,7 +311,7 @@ if __name__ == '__main__':
     file_path = record_file
     f = open(file_path, 'w')
     
-    for bar in tqdm(range(-100, 0)):
+    for bar in tqdm(range(0, 100)):
         # print("")
         # print("bar: ", bar)
 
@@ -386,4 +396,11 @@ if __name__ == '__main__':
                          threshold_list=threshold_list,
                          attack_success_rate_list=attack_success_rate_list,
                          clean_acc_list=clean_acc_list)
+
+    generate_table(defense_type=defense_type,
+                    data_selected=data_selected, 
+                    threshold_list=threshold_list,
+                    attack_success_rate_list=attack_success_rate_list,
+                    clean_acc_list=clean_acc_list)
+
     f.close()
