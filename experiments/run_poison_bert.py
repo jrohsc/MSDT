@@ -55,7 +55,6 @@ def train():
                 if torch.cuda.is_available():
                     padded_text, attention_masks, labels = padded_text.cuda(), attention_masks.cuda(), labels.cuda()
                 output = model(padded_text, attention_masks)[0]
-                print(output)
                 loss = criterion(output, labels)
                 optimizer.zero_grad()
                 loss.backward()
