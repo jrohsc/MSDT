@@ -55,6 +55,7 @@ def train():
                 if torch.cuda.is_available():
                     padded_text, attention_masks, labels = padded_text.cuda(), attention_masks.cuda(), labels.cuda()
                 output = model(padded_text, attention_masks)[0]
+                print(output)
                 loss = criterion(output, labels)
                 optimizer.zero_grad()
                 loss.backward()
@@ -137,7 +138,6 @@ def transfer_bert():
 if __name__ == '__main__':
 
     semantic = 'sst-2'
-    offenseval = 'offenseval'
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', type=str, default=semantic)
@@ -175,11 +175,15 @@ if __name__ == '__main__':
     dev_loader_clean = packDataset_util.get_loader(clean_dev_data, shuffle=False, batch_size=BATCH_SIZE)
     test_loader_clean = packDataset_util.get_loader(clean_test_data, shuffle=False, batch_size=BATCH_SIZE)
 
-    if data_selected == 'dbpedia': num_labels = 14
-    elif data_selected == 'ag': num_labels=4
-    else: num_labels=2
-
-    print("num_labels: ", num_labels)
+    if data_selected == 'dbpedia': 
+        num_labels = 14
+    elif data_selected == 'ag': 
+        num_labels=4
+        num_data = 1000
+        clean_train_data, clean_dev_data, clean_test_data = clean_train_data[:num_data], clean_dev_data[:num_data], clean_test_data[:num_data]
+        poison_train_data, poison_dev_data, poison_test_data = poison_train_data[:num_data], poison_dev_data[:num_data], poison_test_data[:num_data]
+    else: 
+        num_labels=2
 
     model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=num_labels)
     if torch.cuda.is_available():
