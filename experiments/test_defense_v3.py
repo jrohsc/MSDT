@@ -267,16 +267,17 @@ if __name__ == '__main__':
     mlm_bert_model, vocab, tokenizer = get_pretrained(ctxs, 'bert-base-uncased')
     scorer = MLMScorerPT(mlm_bert_model, vocab, tokenizer, ctxs)
 
-    #########
-    poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
-    clean_score_path = 'scores/clean_mlm_scores_' + data_selected + '.txt'
+    ####################################################################################################################
+    # Bring the scores
+#     poinson_score_path = 'scores/poison_mlm_scores_' + data_selected + '.txt'
+#     clean_score_path = 'scores/clean_mlm_scores_' + data_selected + '.txt'
 
-    all_MLM = read_score_txt(poinson_score_path)
-    all_clean_MLM = read_score_txt(clean_score_path)
+#     all_MLM = read_score_txt(poinson_score_path)
+#     all_clean_MLM = read_score_txt(clean_score_path)
 
-    print(all_MLM)
-    print(type(all_MLM))
-    print(type(all_MLM[0][0]))
+#     print(all_MLM)
+#     print(type(all_MLM))
+#     print(type(all_MLM[0][0]))
 
     ####################################################################################################################
     # Save all the scores to txt
