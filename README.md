@@ -88,7 +88,7 @@ CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data offenseval 
 * MLM_Scoring Defense on "AG News" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --record_file defense_MLM_ag.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --target_label 0 --record_file defense_MLM_ag.log
 ```
 
 * MLM_Scoring Defense on "DBPedia" against BadNets:
