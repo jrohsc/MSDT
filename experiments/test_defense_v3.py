@@ -251,6 +251,12 @@ if __name__ == '__main__':
         orig_poison_data = orig_poison_data[:list_size]
         clean_raw_sentences = clean_raw_sentences[:list_size]
 
+    elif data_selected == 'ag':
+        print("data_selected: ", data_selected)
+        list_size = 500
+        orig_poison_data = orig_poison_data[:list_size]
+        clean_raw_sentences = clean_raw_sentences[:list_size]
+
     # list_size = 2
     # orig_poison_data = orig_poison_data[:list_size]
     # clean_raw_sentences = clean_raw_sentences[:list_size]
