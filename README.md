@@ -1,7 +1,7 @@
 # MSDT: Masked Language Model Scoring Defense in Text Domain 
 
 * The code is based on the implementation of [HiddenKiller](https://github.com/thunlp/HiddenKiller), [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
-* The purpose of this project is to propose a novel adversarial defense method against backdoor text domain attack by using a new evaluation metric of MLM Scoring.
+* The purpose of this project is to introduce a novel improved backdoor defense method in text domain using Masked Language Model Scoring metric.
 * The code will be continously updated.
 
 ## LICENSES
