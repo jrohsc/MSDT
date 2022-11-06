@@ -1,6 +1,6 @@
 # MSDT: <ins>M</ins>asked Language Model <ins>S</ins>coring <ins>D</ins>efense in <ins>T</ins>ext Domain 
 
-<img align='right' width="400" alt="MSDT" src="https://user-images.githubusercontent.com/56494297/200155569-8f36a406-0710-4046-a20a-13966fe21c9b.png">
+<img align='right' width="390" alt="MSDT" src="https://user-images.githubusercontent.com/56494297/200155569-8f36a406-0710-4046-a20a-13966fe21c9b.png">
 
 
 * This is the official repository of the code of **"<ins>MSDT: Masked Language Model Scoring Defense in Text Domain</ins>"** paper accepted by the [IEEE International Conference on Universal Village (IEEE UV2022)](https://universalvillage.org/).
