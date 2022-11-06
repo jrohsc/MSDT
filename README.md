@@ -1,11 +1,13 @@
 # MSDT: <ins>M</ins>asked Language Model <ins>S</ins>coring <ins>D</ins>efense in <ins>T</ins>ext Domain 
 
-<img align='right' width="400" alt="MSDT" src="https://user-images.githubusercontent.com/56494297/194807090-905f70c7-25c1-4068-b880-4f0f5124a592.png">
+<img align='right' width="400" alt="MSDT" src="https://user-images.githubusercontent.com/56494297/200155569-8f36a406-0710-4046-a20a-13966fe21c9b.png">
+
 
 * This is the official repository of the code of **"<ins>MSDT: Masked Language Model Scoring Defense in Text Domain</ins>"** paper accepted by the [IEEE International Conference on Universal Village (IEEE UV2022)](https://universalvillage.org/).
 * The code is based on the implementation of [HiddenKiller](https://github.com/thunlp/HiddenKiller), [ONION](https://github.com/thunlp/ONION) and [Masked Language Model Scoring](https://github.com/awslabs/mlm-scoring). 
 * The purpose of this project is to introduce a novel improved textual backdoor defense method using Masked Language Model Scoring metric.
 * The code will be continously updated.
+* Oral Presentation Video Link: [https://youtu.be/oO3FbxnMdv0](https://youtu.be/oO3FbxnMdv0)
 
 ## LICENSES
 - Includes other software related under the MIT and Apache 2.0 license
