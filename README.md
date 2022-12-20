@@ -19,25 +19,52 @@
 * Train poisoned BERT for "SST-2":
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data sst-2 --transfer False --poison_data_path ./data/badnets/sst-2  --clean_data_path ./data/clean_data/sst-2 --optimizer adam --lr 2e-5  --save_path poison_bert_sst_2.pkl
+CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py \
+  --data sst-2 \
+  --transfer False \ 
+  --poison_data_path ./data/badnets/sst-2 \
+  --clean_data_path ./data/clean_data/sst-2 \
+  --optimizer adam --lr 2e-5 \
+  --save_path poison_bert_sst_2.pkl \
 ```
 
 * Train poisoned BERT for "Offenseval":
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data offenseval --transfer False --poison_data_path ./data/badnets/offenseval  --clean_data_path ./data/clean_data/offenseval --optimizer adam --lr 2e-5  --save_path poison_bert_offenseval.pkl
+CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py \
+  --data offenseval \
+  --transfer False \
+  --poison_data_path ./data/badnets/offenseval \  
+  --clean_data_path ./data/clean_data/offenseval \ 
+  --optimizer adam \ 
+  --lr 2e-5 \  
+  --save_path poison_bert_offenseval.pkl
 ```
 
 * Train poisoned BERT for "AG News":
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data ag --transfer False --poison_data_path ./data/badnets/ag  --clean_data_path ./data/clean_data/ag --optimizer adam --lr 2e-5  --save_path poison_bert_ag.pkl
+CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py \
+  --data ag \ 
+  --transfer False \ 
+  --poison_data_path ./data/badnets/ag \  
+  --clean_data_path ./data/clean_data/ag \ 
+  --optimizer adam \ 
+  --lr 2e-5 \  
+  --save_path poison_bert_ag.pkl \
 ```
 
 * Train poisoned BERT for "DBPedia":
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data dbpedia --transfer False --poison_data_path ./data/badnets/dbpedia  --clean_data_path ./data/clean_data/dbpedia --optimizer adam --lr 2e-5  --save_path poison_bert_dbpedia.pkl
+CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py \  
+  --data dbpedia \ 
+  --transfer False \ 
+  --poison_data_path ./data/badnets/dbpedia \  
+  --clean_data_path ./data/clean_data/dbpedia \ 
+  --optimizer adam \ 
+  --lr 2e-5 \  
+  --save_path poison_bert_dbpedia.pkl \
 ```
 
 ## 2. Defense Methods
@@ -46,25 +73,43 @@ CUDA_VISIBLE_DEVICES=0 python experiments/run_poison_bert.py  --data dbpedia --t
 * Original ONION defense on "SST-2" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data sst-2 --model_path poison_bert_sst_2.pkl  --poison_data_path ./data/badnets/sst-2/test.tsv  --clean_data_path ./data/clean_data/sst-2/dev.tsv
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  \
+  --data sst-2 \ 
+  --model_path poison_bert_sst_2.pkl \  
+  --poison_data_path ./data/badnets/sst-2/test.tsv \  
+  --clean_data_path ./data/clean_data/sst-2/dev.tsv
 ```
 
 * Original ONION defense on "Offenseval" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data offenseval --model_path poison_bert_offenseval.pkl  --poison_data_path ./data/badnets/offenseval/test.tsv  --clean_data_path ./data/clean_data/offenseval/dev.tsv ONION_offensevel.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py \ 
+  --data offenseval \ 
+  --model_path poison_bert_offenseval.pkl \  
+  --poison_data_path ./data/badnets/offenseval/test.tsv \  
+  --clean_data_path ./data/clean_data/offenseval/dev.tsv ONION_offensevel.log \
 ```
 
 * Original ONION defense on "AG News" against BadNets:
 
 ```bash
-!CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --target_label 0 --record_file ONION_ag.log
+!CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py \ 
+  --data ag \ 
+  --model_path poison_bert_ag.pkl \  
+  --poison_data_path ./data/badnets/ag/test.tsv \  
+  --clean_data_path ./data/clean_data/ag/dev.tsv \ 
+  --target_label 0 \
+  --record_file ONION_ag.log
 ```
 
 * Original ONION defense on "DBPedia" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py  --data dbpedia --model_path poison_bert_dbpedia.pkl  --poison_data_path ./data/badnets/dbpedia/test.tsv  --clean_data_path ./data/clean_data/dbpedia/dev.tsv
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense.py \  
+  --data dbpedia \ 
+  --model_path poison_bert_dbpedia.pkl \  
+  --poison_data_path ./data/badnets/dbpedia/test.tsv \  
+  --clean_data_path ./data/clean_data/dbpedia/dev.tsv
 ```
 
 
@@ -81,25 +126,46 @@ pip install mxnet-cu112
 * MLM_Scoring Defense on "SST-2" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data sst-2 --model_path poison_bert_sst_2.pkl  --poison_data_path ./data/badnets/sst-2/test.tsv  --clean_data_path ./data/clean_data/sst-2/dev.tsv --record_file MLM_sst2.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py \  
+  --data sst-2 \
+  --model_path poison_bert_sst_2.pkl \  
+  --poison_data_path ./data/badnets/sst-2/test.tsv \  
+  --clean_data_path ./data/clean_data/sst-2/dev.tsv \ 
+  --record_file MLM_sst2.log \
 ```
 
 * MLM_Scoring Defense on "Offenseval" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data offenseval --model_path poison_bert_offenseval.pkl  --poison_data_path ./data/badnets/offenseval/test.tsv  --clean_data_path ./data/clean_data/offenseval/dev.tsv --record_file MLM_offenseval.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py \  
+  --data offenseval \ 
+  --model_path poison_bert_offenseval.pkl \  
+  --poison_data_path ./data/badnets/offenseval/test.tsv \ 
+  --clean_data_path ./data/clean_data/offenseval/dev.tsv \ 
+  --record_file MLM_offenseval.log
 ```
 
 * MLM_Scoring Defense on "AG News" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data ag --model_path poison_bert_ag.pkl  --poison_data_path ./data/badnets/ag/test.tsv  --clean_data_path ./data/clean_data/ag/dev.tsv --target_label 0 --record_file MLM_ag.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py \  
+  --data ag \ 
+  --model_path poison_bert_ag.pkl \  
+  --poison_data_path ./data/badnets/ag/test.tsv \  
+  --clean_data_path ./data/clean_data/ag/dev.tsv \ 
+  --target_label 0 \
+  --record_file MLM_ag.log
 ```
 
 * MLM_Scoring Defense on "DBPedia" against BadNets:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py  --data dbpedia --model_path poison_bert_dbpedia.pkl  --poison_data_path ./data/badnets/dbpedia/test.tsv  --clean_data_path ./data/clean_data/dbpedia/dev.tsv --record_file MLM_dbpedia.log
+CUDA_VISIBLE_DEVICES=0 python experiments/test_defense_v3.py \  
+--data dbpedia \ 
+--model_path poison_bert_dbpedia.pkl \ 
+--poison_data_path ./data/badnets/dbpedia/test.tsv \  
+--clean_data_path ./data/clean_data/dbpedia/dev.tsv \
+--record_file MLM_dbpedia.log
 ```
 
 
